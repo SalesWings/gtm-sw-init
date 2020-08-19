@@ -13,7 +13,7 @@
 # limitations under the License.
 
 homepage: "https://www.saleswingsapp.com"
-documentation: "https://www.example.com/documentation"
+documentation: "http://support.saleswingsapp.com/en/"
 versions:
   - sha: d4ffbd190ac114b23ed437643e38288c659dfa7d
     changeNotes: Initial release.
