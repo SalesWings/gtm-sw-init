@@ -15,6 +15,8 @@
 homepage: "https://www.saleswingsapp.com"
 documentation: "http://support.saleswingsapp.com/en/"
 versions:
+  - sha: 038b6a35e3d187223c6aaee60a433d37a5e9ffdc
+    changeNotes: terms of service appended
   - sha: 0315844dcde1799b5bf87e47d25fb7f7b094820b
     changeNotes: Brand name appended to template
   - sha: d4ffbd190ac114b23ed437643e38288c659dfa7d
