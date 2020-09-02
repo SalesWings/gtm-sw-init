@@ -231,7 +231,9 @@ ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 const log = require('logToConsole');
 const injectScript = require('injectScript');
 const createArgumentsQueue = require('createArgumentsQueue');
-let ws_script = 'https://s.saleswingsapp.com/sw.prod.min.js';
+let ws_script = data.beta?
+    'https://s.saleswingsapp.com/sw.beta.min.js':
+    'https://s.saleswingsapp.com/sw.prod.min.js';
 
 injectScript(ws_script,data.gtmOnSuccess, data.gtmOnFailure,'');
 
@@ -264,7 +266,7 @@ if(data.trackformsmode){
     mode: data.trackformsmode,
     delay: data.trackformsdelay});
 }
-log(data);
+
 data.gtmOnSuccess();
 
 
