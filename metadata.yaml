@@ -16,7 +16,7 @@ homepage: "https://www.saleswingsapp.com"
 documentation: "http://support.saleswingsapp.com/en/"
 versions:
   - sha: 6bd724801e627ee475f8729306994534aee2f298
-    changeNotes: bugfix: script source depending on tag parameter "beta"
+    changeNotes: bugfix in script source depending on tag parameter "beta"
   - sha: 038b6a35e3d187223c6aaee60a433d37a5e9ffdc
     changeNotes: terms of service appended
   - sha: 0315844dcde1799b5bf87e47d25fb7f7b094820b
