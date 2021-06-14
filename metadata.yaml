@@ -15,6 +15,8 @@
 homepage: "https://www.saleswingsapp.com"
 documentation: "http://support.saleswingsapp.com/en/"
 versions:
+  - sha: 1f5eddef37620759adc3eaa171fdcadb4e50b229
+    changeNotes: fix letter case for transport values
   - sha: 37a0eb3919570cd81dbe30b291c5e8049b0ae0a7
     changeNotes: beacon and post as transport parameter
   - sha: 6bd724801e627ee475f8729306994534aee2f298
