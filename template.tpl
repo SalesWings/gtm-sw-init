@@ -1,11 +1,12 @@
-___TERMS_OF_SERVICE___
+﻿___TERMS_OF_SERVICE___
 
 By creating or modifying this file you agree to Google Tag Manager's Community
 Template Gallery Developer Terms of Service available at
 https://developers.google.com/tag-manager/gallery-tos (or such other URL as
 Google may provide), as modified from time to time.
 
-﻿___INFO___
+
+___INFO___
 
 {
   "type": "TAG",
@@ -13,7 +14,11 @@ Google may provide), as modified from time to time.
   "version": 1,
   "securityGroups": [],
   "displayName": "SalesWings",
-  "categories": ["SALES","PERSONALIZATION","ATTRIBUTION"],    
+  "categories": [
+    "SALES",
+    "PERSONALIZATION",
+    "ATTRIBUTION"
+  ],
   "brand": {
     "id": "brand_dummy",
     "displayName": "SD Technologies SA",
@@ -221,6 +226,23 @@ ___TEMPLATE_PARAMETERS___
         "simpleValueType": true
       }
     ]
+  },
+  {
+    "type": "SELECT",
+    "name": "transport",
+    "displayName": "transport",
+    "selectItems": [
+      {
+        "value": "Post",
+        "displayValue": "Post"
+      },
+      {
+        "value": "Beacon",
+        "displayValue": "Beacon"
+      }
+    ],
+    "simpleValueType": true,
+    "defaultValue": "Post"
   }
 ]
 
@@ -242,7 +264,7 @@ const sw = createArgumentsQueue('sw', 'sw.q');
 sw('init', {
   pid: data.pid,
   debug: data.debug,
-  transport: 'post',
+  transport: data.transport,
   clientSideCookie:'true',
   cookieName:data.cookiename,
   cookieDomain: data.cookie,
@@ -254,7 +276,7 @@ sw('init', {
 undefined
 }  );
 
-if(data.trackhashchange ||data.tracklocationchange){
+if(data.trackhashchange || data.tracklocationchange){
   sw('trackPageviews',{  
     trackHashChange: data.trackhashchange,
     trackLocationChange: data.tracklocationchange}
