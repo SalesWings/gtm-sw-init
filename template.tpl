@@ -230,19 +230,19 @@ ___TEMPLATE_PARAMETERS___
   {
     "type": "SELECT",
     "name": "transport",
-    "displayName": "transport",
+    "displayName": "Transport",
     "selectItems": [
       {
-        "value": "Post",
+        "value": "post",
         "displayValue": "Post"
       },
       {
-        "value": "Beacon",
+        "value": "beacon",
         "displayValue": "Beacon"
       }
     ],
     "simpleValueType": true,
-    "defaultValue": "Post"
+    "defaultValue": "post"
   }
 ]
 
