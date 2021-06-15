@@ -13,7 +13,7 @@ ___INFO___
   "id": "cvt_temp_public_id",
   "version": 1,
   "securityGroups": [],
-  "displayName": "SalesWings",
+  "displayName": "SalesWings_dev",
   "categories": [
     "SALES",
     "PERSONALIZATION",
@@ -224,25 +224,25 @@ ___TEMPLATE_PARAMETERS___
         "name": "beta",
         "checkboxText": "Beta",
         "simpleValueType": true
-      }
-    ]
-  },
-  {
-    "type": "SELECT",
-    "name": "transport",
-    "displayName": "Transport",
-    "selectItems": [
-      {
-        "value": "post",
-        "displayValue": "Post"
       },
       {
-        "value": "beacon",
-        "displayValue": "Beacon"
+        "type": "SELECT",
+        "name": "transport",
+        "displayName": "Transport",
+        "macrosInSelect": false,
+        "selectItems": [
+          {
+            "value": "post",
+            "displayValue": "Post"
+          },
+          {
+            "value": "beacon",
+            "displayValue": "Beacon"
+          }
+        ],
+        "simpleValueType": true
       }
-    ],
-    "simpleValueType": true,
-    "defaultValue": "post"
+    ]
   }
 ]
 
@@ -288,7 +288,7 @@ if(data.trackformsmode){
     mode: data.trackformsmode,
     delay: data.trackformsdelay});
 }
-
+log(data);
 data.gtmOnSuccess();
 
 
@@ -458,7 +458,7 @@ scenarios:
     const mockData = {
       pid:'4723ad53-8a19-43ab-9b0a-e6d3f1fbb2e4',
       debug:!0,
-      transport:'post',
+      transport:'beacon',
       clientSideCookie:'true',
       beta:true
       // Mocked field values
