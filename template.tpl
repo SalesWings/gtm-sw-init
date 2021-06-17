@@ -240,7 +240,8 @@ ___TEMPLATE_PARAMETERS___
             "displayValue": "Beacon"
           }
         ],
-        "simpleValueType": true
+        "simpleValueType": true,
+        "defaultValue": "post"
       }
     ]
   }
