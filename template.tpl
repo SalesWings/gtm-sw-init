@@ -1,12 +1,4 @@
-﻿___TERMS_OF_SERVICE___
-
-By creating or modifying this file you agree to Google Tag Manager's Community
-Template Gallery Developer Terms of Service available at
-https://developers.google.com/tag-manager/gallery-tos (or such other URL as
-Google may provide), as modified from time to time.
-
-
-___INFO___
+﻿___INFO___
 
 {
   "type": "TAG",
@@ -46,6 +38,24 @@ ___TEMPLATE_PARAMETERS___
     ],
     "alwaysInSummary": true,
     "valueHint": "123e4567-e89b-12d3-a456-426655440000"
+  },
+  {
+    "type": "SELECT",
+    "name": "apiUrl",
+    "displayName": "tracking Api URL",
+    "macrosInSelect": false,
+    "selectItems": [
+      {
+        "value": "https://to.go.salesewingsapp.com",
+        "displayValue": "Helium"
+      },
+      {
+        "value": "https://to.go",
+        "displayValue": "Ozone"
+      }
+    ],
+    "simpleValueType": true,
+    "defaultValue": "https://to.go.salesewingsapp.com"
   },
   {
     "type": "GROUP",
@@ -242,6 +252,28 @@ ___TEMPLATE_PARAMETERS___
         ],
         "simpleValueType": true,
         "defaultValue": "post"
+      },
+      {
+        "type": "SELECT",
+        "name": "hashEmail",
+        "displayName": "Email hash function",
+        "macrosInSelect": false,
+        "selectItems": [
+          {
+            "value": "plain",
+            "displayValue": "Default"
+          },
+          {
+            "value": "sha256",
+            "displayValue": "SHA256"
+          },
+          {
+            "value": "sha512",
+            "displayValue": "SHA512"
+          }
+        ],
+        "simpleValueType": true,
+        "defaultValue": "plain"
       }
     ]
   }
@@ -264,6 +296,7 @@ const sw = createArgumentsQueue('sw', 'sw.q');
 
 sw('init', {
   pid: data.pid,
+  apiUrl: data.apiUrl,
   debug: data.debug,
   transport: data.transport,
   clientSideCookie:'true',
@@ -274,7 +307,8 @@ sw('init', {
     mode:data.framebindingmode,
     selector:data.selector,
     trustedDomains:data.trusteddomain}:
-undefined
+undefined,
+  emailFormat:data.hashEmail
 }  );
 
 if(data.trackhashchange || data.tracklocationchange){
