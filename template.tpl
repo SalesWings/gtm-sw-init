@@ -40,22 +40,10 @@ ___TEMPLATE_PARAMETERS___
     "valueHint": "123e4567-e89b-12d3-a456-426655440000"
   },
   {
-    "type": "SELECT",
-    "name": "apiUrl",
-    "displayName": "tracking Api URL",
-    "macrosInSelect": false,
-    "selectItems": [
-      {
-        "value": "https://to.go.salesewingsapp.com",
-        "displayValue": "Helium"
-      },
-      {
-        "value": "https://to.go",
-        "displayValue": "Ozone"
-      }
-    ],
-    "simpleValueType": true,
-    "defaultValue": "https://to.go.salesewingsapp.com"
+    "type": "TEXT",
+    "name": "apiurl",
+    "displayName": "Tracking API URL",
+    "simpleValueType": true
   },
   {
     "type": "GROUP",
@@ -296,7 +284,7 @@ const sw = createArgumentsQueue('sw', 'sw.q');
 
 sw('init', {
   pid: data.pid,
-  apiUrl: data.apiUrl,
+  apiUrl: data.apiurl,
   debug: data.debug,
   transport: data.transport,
   clientSideCookie:'true',
@@ -470,6 +458,10 @@ ___WEB_PERMISSIONS___
               {
                 "type": 1,
                 "string": "https://s.saleswingsapp.com/sw.beta.min.js"
+              },
+              {
+                "type": 1,
+                "string": "https://s.saleswingsapp.com/sw.dev.min.js"
               }
             ]
           }
