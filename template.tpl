@@ -92,7 +92,6 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "simpleValueType": true,
-        "defaultValue": "submit",
         "notSetText": "Don\u0027t Track"
       },
       {
@@ -270,7 +269,6 @@ ___TEMPLATE_PARAMETERS___
 
 ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
-// Укажите здесь код шаблона.
 const log = require('logToConsole');
 const injectScript = require('injectScript');
 const createArgumentsQueue = require('createArgumentsQueue');
@@ -284,7 +282,7 @@ const sw = createArgumentsQueue('sw', 'sw.q');
 
 sw('init', {
   pid: data.pid,
-  apiUrl: data.apiurl,
+  apiUrl: data.apiurl?data.apiurl:undefined,
   debug: data.debug,
   transport: data.transport,
   clientSideCookie:'true',
