@@ -253,10 +253,6 @@ ___TEMPLATE_PARAMETERS___
           {
             "value": "sha256",
             "displayValue": "SHA256"
-          },
-          {
-            "value": "sha512",
-            "displayValue": "SHA512"
           }
         ],
         "simpleValueType": true,
