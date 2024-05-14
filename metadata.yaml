@@ -15,10 +15,8 @@
 homepage: "https://www.saleswingsapp.com"
 documentation: "http://support.saleswingsapp.com/en/"
 versions:
-  # Latest version
   - sha: e73df10eb97706e58b758e7c5abc5d461375d8be
     changeNotes: publish request (Updated Terms Of Service)
-  # Older versions    
   - sha: 7b34216c08cf9286288c1fa9ce59806c9df3c51e
     changeNotes: Email hashing & API url parameters appended(1)
   - sha: f3bd596e45ba998c1e90f40a829e7abba2faf74b
