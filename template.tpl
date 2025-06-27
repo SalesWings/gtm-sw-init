@@ -100,6 +100,7 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "simpleValueType": true,
+        "defaultValue": "submit",
         "notSetText": "Don\u0027t Track"
       },
       {
