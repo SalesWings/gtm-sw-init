@@ -56,7 +56,7 @@ ___TEMPLATE_PARAMETERS___
   {
     "type": "GROUP",
     "name": "trackpageview",
-    "displayName": "Track Page View",
+    "displayName": "Track Page Views",
     "groupStyle": "ZIPPY_CLOSED",
     "subParams": [
       {
