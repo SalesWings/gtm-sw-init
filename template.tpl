@@ -92,6 +92,27 @@ ___TEMPLATE_PARAMETERS___
   },
   {
     "type": "GROUP",
+    "name": "interactions",
+    "displayName": "Interactions",
+    "groupStyle": "ZIPPY_CLOSED",
+    "subParams": [
+      {
+        "type": "CHECKBOX",
+        "name": "interactionsenabled",
+        "checkboxText": "Enabled",
+        "simpleValueType": true,
+        "defaultValue": false
+      },
+      {
+        "type": "TEXT",
+        "name": "interactionsapiurl",
+        "displayName": "API URL",
+        "simpleValueType": true
+      }
+    ]
+  },
+  {
+    "type": "GROUP",
     "name": "cookie",
     "displayName": "Cookie",
     "subParams": [
@@ -312,6 +333,12 @@ if(data.trackformsenabled){
   sw('trackForms', {
     mode: data.trackformsmode,
     delay: data.trackformsdelay});
+}
+
+if(data.interactionsenabled){
+  sw('enablePopups', {
+    apiUrl: data.interactionsapiurl || undefined
+  });
 }
 log(data);
 data.gtmOnSuccess();
