@@ -82,11 +82,45 @@ ___TEMPLATE_PARAMETERS___
     "groupStyle": "ZIPPY_CLOSED",
     "subParams": [
       {
-        "type": "CHECKBOX",
-        "name": "trackformsenabled",
-        "checkboxText": "Enabled",
+        "type": "SELECT",
+        "name": "trackformsmode",
+        "displayName": "Mode",
+        "selectItems": [
+          {
+            "value": "legacy",
+            "displayValue": "Legacy"
+          },
+          {
+            "value": "blur",
+            "displayValue": "Blur"
+          },
+          {
+            "value": "submit",
+            "displayValue": "Submit"
+          }
+        ],
         "simpleValueType": true,
-        "defaultValue": true
+        "defaultValue": "submit",
+        "notSetText": "Don\u0027t Track"
+      },
+      {
+        "type": "TEXT",
+        "name": "trackformsdelay",
+        "displayName": "Delay",
+        "simpleValueType": true,
+        "valueValidators": [
+          {
+            "type": "NON_NEGATIVE_NUMBER"
+          }
+        ],
+        "enablingConditions": [
+          {
+            "paramName": "trackformsmode",
+            "paramValue": "",
+            "type": "PRESENT"
+          }
+        ],
+        "valueHint": "0"
       }
     ]
   },
@@ -253,39 +287,6 @@ ___TEMPLATE_PARAMETERS___
         ],
         "simpleValueType": true,
         "defaultValue": "plain"
-      },
-      {
-        "type": "SELECT",
-        "name": "trackformsmode",
-        "displayName": "Form Tracking Mode",
-        "selectItems": [
-          {
-            "value": "submit",
-            "displayValue": "Submit"
-          },
-          {
-            "value": "blur",
-            "displayValue": "Blur"
-          },
-          {
-            "value": "legacy",
-            "displayValue": "Legacy"
-          }
-        ],
-        "simpleValueType": true,
-        "defaultValue": "submit"
-      },
-      {
-        "type": "TEXT",
-        "name": "trackformsdelay",
-        "displayName": "Form Tracking Delay",
-        "simpleValueType": true,
-        "valueValidators": [
-          {
-            "type": "NON_NEGATIVE_NUMBER"
-          }
-        ],
-        "valueHint": "0"
       }
     ]
   }
@@ -329,7 +330,7 @@ if(data.trackhashchange || data.tracklocationchange){
     ); 
 }
 
-if(data.trackformsenabled){
+if(data.trackformsmode){
   sw('trackForms', {
     mode: data.trackformsmode,
     delay: data.trackformsdelay});
