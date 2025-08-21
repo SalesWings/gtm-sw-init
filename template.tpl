@@ -45,12 +45,14 @@ ___TEMPLATE_PARAMETERS___
       }
     ],
     "alwaysInSummary": true,
-    "valueHint": "123e4567-e89b-12d3-a456-426655440000"
+    "valueHint": "123e4567-e89b-12d3-a456-426655440000",
+    "help": "Add your unique account ID (Project ID) which you can find inside your SalesWings account settings."
   },
   {
     "type": "TEXT",
     "name": "apiurl",
     "displayName": "Tracking API URL",
+    "help": "Configure optional custom API URL. This is reserved for internal use by the SalesWings development team.",
     "simpleValueType": true
   },
   {
@@ -61,17 +63,26 @@ ___TEMPLATE_PARAMETERS___
     "subParams": [
       {
         "type": "CHECKBOX",
-        "name": "trackhashchange",
-        "checkboxText": "Track Hash Change",
+        "name": "tracklocationchange",
+        "checkboxText": "Enabled",
         "simpleValueType": true,
-        "defaultValue": true
+        "defaultValue": true,
+        "help": "Automatically track page views."
       },
       {
         "type": "CHECKBOX",
-        "name": "tracklocationchange",
-        "checkboxText": "Track Location Change",
+        "name": "trackhashchange",
+        "checkboxText": "Track Hash Change",
         "simpleValueType": true,
-        "defaultValue": true
+        "defaultValue": true,
+        "help": "Track new page views when the URL hash changes.",
+        "enablingConditions": [
+          {
+            "paramName": "tracklocationchange",
+            "paramValue": true,
+            "type": "EQUALS"
+          }
+        ]
       }
     ]
   },
@@ -101,12 +112,14 @@ ___TEMPLATE_PARAMETERS___
         ],
         "simpleValueType": true,
         "defaultValue": "submit",
-        "notSetText": "Don\u0027t Track"
+        "notSetText": "Don\u0027t Track",
+        "help": "Configure how to track form submissions. Use Submit for new script installations. Use Don't Track to disable automated form submission tracking. Use Blur or Legacy only for compatibility with legacy script installations."
       },
       {
         "type": "TEXT",
         "name": "trackformsdelay",
         "displayName": "Delay",
+        "help": "Use only for compatibility with legacy script installations.",
         "simpleValueType": true,
         "valueValidators": [
           {
@@ -134,6 +147,7 @@ ___TEMPLATE_PARAMETERS___
         "type": "CHECKBOX",
         "name": "interactionsenabled",
         "checkboxText": "Enabled",
+        "help": "Turn this on ONLY if you are using the SalesWings Interactions add-on solution.",
         "simpleValueType": true,
         "defaultValue": false
       },
@@ -141,7 +155,15 @@ ___TEMPLATE_PARAMETERS___
         "type": "TEXT",
         "name": "interactionsapiurl",
         "displayName": "API URL",
-        "simpleValueType": true
+        "simpleValueType": true,
+        "help": "Configure optional custom API URL. This is reserved for internal use by the SalesWings development team.",
+        "enablingConditions": [
+          {
+            "paramName": "interactionsenabled",
+            "paramValue": true,
+            "type": "EQUALS"
+          }
+        ]
       }
     ]
   },
@@ -155,20 +177,23 @@ ___TEMPLATE_PARAMETERS___
         "name": "cookiename",
         "simpleValueType": true,
         "defaultValue": "sw",
-        "displayName": "Name"
+        "displayName": "Name",
+        "help": "Name of the first-party cookie where the anonymous tracking ID is stored. Override the default value 'sw' if you want to use a different cookie name."
       },
       {
         "type": "TEXT",
         "name": "cookiedomain",
         "displayName": "Domain",
-        "simpleValueType": true
+        "simpleValueType": true,
+        "help": "Domain name for the cookie. By default, uses the top-level domain (e.g., 'example.com') of the page where the script is loaded. Override to use a custom domain name."
       },
       {
         "type": "TEXT",
         "name": "cookiepath",
         "displayName": "Path",
         "simpleValueType": true,
-        "defaultValue": "/"
+        "defaultValue": "/",
+        "help": "Restrict the path within the domain for which the cookie is valid. Use the root path '/' to make the cookie valid on any path within the domain."
       }
     ],
     "groupStyle": "ZIPPY_CLOSED"
@@ -198,7 +223,8 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "simpleValueType": true,
-        "notSetText": "Standalone"
+        "notSetText": "Standalone",
+        "help": "Set to Guest if the script is loaded on a page inside an iframe. Set to Host if the script is loaded on a page with embedded iframes running other instances of the script in Guest mode. Use Standalone otherwise."
       },
       {
         "type": "TEXT",
@@ -244,13 +270,15 @@ ___TEMPLATE_PARAMETERS___
         "type": "CHECKBOX",
         "name": "debug",
         "checkboxText": "Debug",
-        "simpleValueType": true
+        "simpleValueType": true,
+        "help": "Log debug messages to browser console."
       },
       {
         "type": "CHECKBOX",
         "name": "beta",
         "checkboxText": "Beta",
-        "simpleValueType": true
+        "simpleValueType": true,
+        "help": "Use beta build of the tracking script. This is reserved for internal use by the SalesWings development team."
       },
       {
         "type": "SELECT",
@@ -268,7 +296,8 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "simpleValueType": true,
-        "defaultValue": "post"
+        "defaultValue": "post",
+        "help": "Choose JavaScript API used to send HTTP requests. Use Post for XHR POST requests and Beacon for Navigator Beacon API."
       },
       {
         "type": "SELECT",
@@ -286,7 +315,8 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "simpleValueType": true,
-        "defaultValue": "plain"
+        "defaultValue": "plain",
+        "help": "Use this ONLY if you are subscribing to the SalesWings Privacy Shield option."
       }
     ]
   }
