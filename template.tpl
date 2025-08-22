@@ -140,7 +140,7 @@ ___TEMPLATE_PARAMETERS___
   {
     "type": "GROUP",
     "name": "interactions",
-    "displayName": "Interactions",
+    "displayName": "SalesWings Interactions",
     "groupStyle": "ZIPPY_CLOSED",
     "subParams": [
       {
