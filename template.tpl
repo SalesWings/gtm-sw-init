@@ -93,47 +93,12 @@ ___TEMPLATE_PARAMETERS___
     "groupStyle": "ZIPPY_CLOSED",
     "subParams": [
       {
-        "type": "SELECT",
-        "name": "trackformsmode",
-        "displayName": "Mode",
-        "selectItems": [
-          {
-            "value": "legacy",
-            "displayValue": "Legacy"
-          },
-          {
-            "value": "blur",
-            "displayValue": "Blur"
-          },
-          {
-            "value": "submit",
-            "displayValue": "Submit"
-          }
-        ],
+        "type": "CHECKBOX",
+        "name": "trackformsenabled",
+        "checkboxText": "Enabled",
         "simpleValueType": true,
-        "defaultValue": "submit",
-        "notSetText": "Don\u0027t Track",
-        "help": "Configure how to track form submissions. Use Submit for new script installations. Use Don\u0027t Track to disable automated form submission tracking. Use Blur or Legacy only for compatibility with legacy script installations."
-      },
-      {
-        "type": "TEXT",
-        "name": "trackformsdelay",
-        "displayName": "Delay",
-        "help": "Use only for compatibility with legacy script installations.",
-        "simpleValueType": true,
-        "valueValidators": [
-          {
-            "type": "NON_NEGATIVE_NUMBER"
-          }
-        ],
-        "enablingConditions": [
-          {
-            "paramName": "trackformsmode",
-            "paramValue": "",
-            "type": "PRESENT"
-          }
-        ],
-        "valueHint": "0"
+        "defaultValue": true,
+        "help": "Enable automated form submission tracking."
       }
     ]
   },
@@ -317,6 +282,56 @@ ___TEMPLATE_PARAMETERS___
         "simpleValueType": true,
         "defaultValue": "plain",
         "help": "Use this ONLY if you are subscribing to the SalesWings Privacy Shield option."
+      },
+      {
+        "type": "SELECT",
+        "name": "trackformsmode",
+        "displayName": "Form tracking mode",
+        "macrosInSelect": false,
+        "selectItems": [
+          {
+            "value": "legacy",
+            "displayValue": "Legacy"
+          },
+          {
+            "value": "blur",
+            "displayValue": "Blur"
+          },
+          {
+            "value": "submit",
+            "displayValue": "Submit"
+          }
+        ],
+        "simpleValueType": true,
+        "defaultValue": "submit",
+        "help": "Configure how to track form submissions. Use Submit for new script installations. Use Blur or Legacy only for compatibility with legacy script installations.",
+        "enablingConditions": [
+          {
+            "paramName": "trackformsenabled",
+            "paramValue": true,
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "TEXT",
+        "name": "trackformsdelay",
+        "displayName": "Form tracking delay",
+        "help": "Use only for compatibility with legacy script installations.",
+        "simpleValueType": true,
+        "valueValidators": [
+          {
+            "type": "NON_NEGATIVE_NUMBER"
+          }
+        ],
+        "enablingConditions": [
+          {
+            "paramName": "trackformsenabled",
+            "paramValue": true,
+            "type": "EQUALS"
+          }
+        ],
+        "valueHint": "0"
       }
     ]
   }
@@ -360,7 +375,7 @@ if(data.trackhashchange || data.tracklocationchange){
     ); 
 }
 
-if(data.trackformsmode){
+if(data.trackformsenabled){
   sw('trackForms', {
     mode: data.trackformsmode,
     delay: data.trackformsdelay});
@@ -579,5 +594,3 @@ scenarios:
 ___NOTES___
 
 Created on 8/18/2020, 5:41:32 PM
-
-
