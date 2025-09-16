@@ -358,7 +358,7 @@ sw('init', {
   transport: data.transport,
   clientSideCookie:'true',
   cookieName:data.cookiename,
-  cookieDomain: data.cookie,
+  cookieDomain: data.cookiedomain,
   cookiePath: data.cookiepath,
   binding:data.framebindingmode?{
     mode:data.framebindingmode,
@@ -377,7 +377,7 @@ if(data.trackhashchange || data.tracklocationchange){
 
 if(data.trackformsenabled){
   sw('trackForms', {
-    mode: data.trackformsmode,
+    mode: data.trackformsmode || 'submit',
     delay: data.trackformsdelay});
 }
 
@@ -550,46 +550,515 @@ ___WEB_PERMISSIONS___
   }
 ]
 
-
 ___TESTS___
 
 scenarios:
-- name: beta
-  code: |-
-    const log = require('logToConsole');
-    const mockData = {
-      pid:'4723ad53-8a19-43ab-9b0a-e6d3f1fbb2e4',
-      debug:!0,
-      transport:'beacon',
-      clientSideCookie:'true',
-      beta:true
-      // Mocked field values
-    };
-
-    log(mockData);
-
-    // Call runCode to run the template's code.
-    runCode(mockData);
-
-    // Verify that the tag finished successfully.
-    assertApi('gtmOnSuccess').wasCalled();
-- name: prod
+- name: sw_init_core_parameters
   code: |-
     const mockData = {
-      pid:'4723ad53-8a19-43ab-9b0a-e6d3f1fbb2e4',
-      debug:!0,
-      transport:'post',
-      clientSideCookie:'true',
-      beta:false
-      // Mocked field values
+      pid: '123e4567-e89b-12d3-a456-426655440000',
+      apiurl: 'https://custom-api.example.com/track',
+      debug: true,
+      transport: 'beacon'
     };
 
-    // Call runCode to run the template's code.
+    let capturedSwCalls = [];
+    mock('createArgumentsQueue', function(name, queue) {
+      return function(action, params) {
+        capturedSwCalls.push({
+          name: name,
+          action: action,
+          params: params
+        });
+      };
+    });
+
     runCode(mockData);
 
-    // Verify that the tag finished successfully.
+    const initCall = (function() {
+      for (let i = 0; i < capturedSwCalls.length; i++) {
+        if (capturedSwCalls[i].action === 'init') {
+          return capturedSwCalls[i];
+        }
+      }
+      return undefined;
+    })();
+    assertThat(initCall).isDefined();
+    assertThat(initCall.params.pid).isEqualTo('123e4567-e89b-12d3-a456-426655440000');
+    assertThat(initCall.params.apiUrl).isEqualTo('https://custom-api.example.com/track');
+    assertThat(initCall.params.debug).isEqualTo(true);
+    assertThat(initCall.params.transport).isEqualTo('beacon');
     assertApi('gtmOnSuccess').wasCalled();
 
+- name: sw_init_cookie_parameters
+  code: |-
+    const mockData = {
+      pid: '123e4567-e89b-12d3-a456-426655440000',
+      cookiename: 'test_cookie',
+      cookiedomain: 'example.com',
+      cookiepath: '/test'
+    };
+
+    let capturedSwCalls = [];
+    mock('createArgumentsQueue', function(name, queue) {
+      return function(action, params) {
+        capturedSwCalls.push({
+          name: name,
+          action: action,
+          params: params
+        });
+      };
+    });
+
+    runCode(mockData);
+
+    const initCall = (function() {
+      for (let i = 0; i < capturedSwCalls.length; i++) {
+        if (capturedSwCalls[i].action === 'init') {
+          return capturedSwCalls[i];
+        }
+      }
+      return undefined;
+    })();
+    assertThat(initCall).isDefined();
+    assertThat(initCall.params.cookieName).isEqualTo('test_cookie');
+    assertThat(initCall.params.cookieDomain).isEqualTo('example.com');
+    assertThat(initCall.params.cookiePath).isEqualTo('/test');
+    assertApi('gtmOnSuccess').wasCalled();
+
+- name: sw_init_frame_binding
+  code: |-
+    const mockData = {
+      pid: '123e4567-e89b-12d3-a456-426655440000',
+      framebindingmode: 'host',
+      selector: '.test-iframe',
+      trusteddomain: 'trusted.example.com'
+    };
+
+    let capturedSwCalls = [];
+    mock('createArgumentsQueue', function(name, queue) {
+      return function(action, params) {
+        capturedSwCalls.push({
+          name: name,
+          action: action,
+          params: params
+        });
+      };
+    });
+
+    runCode(mockData);
+
+    const initCall = (function() {
+      for (let i = 0; i < capturedSwCalls.length; i++) {
+        if (capturedSwCalls[i].action === 'init') {
+          return capturedSwCalls[i];
+        }
+      }
+      return undefined;
+    })();
+    assertThat(initCall).isDefined();
+    assertThat(initCall.params.binding.mode).isEqualTo('host');
+    assertThat(initCall.params.binding.selector).isEqualTo('.test-iframe');
+    assertThat(initCall.params.binding.trustedDomains).isEqualTo('trusted.example.com');
+    assertApi('gtmOnSuccess').wasCalled();
+
+- name: sw_init_email_format
+  code: |-
+    const mockData = {
+      pid: '123e4567-e89b-12d3-a456-426655440000',
+      hashEmail: 'sha256'
+    };
+
+    let capturedSwCalls = [];
+    mock('createArgumentsQueue', function(name, queue) {
+      return function(action, params) {
+        capturedSwCalls.push({
+          name: name,
+          action: action,
+          params: params
+        });
+      };
+    });
+
+    runCode(mockData);
+
+    const initCall = (function() {
+      for (let i = 0; i < capturedSwCalls.length; i++) {
+        if (capturedSwCalls[i].action === 'init') {
+          return capturedSwCalls[i];
+        }
+      }
+      return undefined;
+    })();
+    assertThat(initCall).isDefined();
+    assertThat(initCall.params.emailFormat).isEqualTo('sha256');
+    assertApi('gtmOnSuccess').wasCalled();
+
+- name: sw_trackPageviews_enabled
+  code: |-
+    const mockData = {
+      pid: '123e4567-e89b-12d3-a456-426655440000',
+      tracklocationchange: true,
+      trackhashchange: true
+    };
+
+    let capturedSwCalls = [];
+    mock('createArgumentsQueue', function(name, queue) {
+      return function(action, params) {
+        capturedSwCalls.push({
+          name: name,
+          action: action,
+          params: params
+        });
+      };
+    });
+
+    runCode(mockData);
+
+    const trackPageviewsCall = (function() {
+      for (let i = 0; i < capturedSwCalls.length; i++) {
+        if (capturedSwCalls[i].action === 'trackPageviews') {
+          return capturedSwCalls[i];
+        }
+      }
+      return undefined;
+    })();
+    assertThat(trackPageviewsCall).isDefined();
+    assertThat(trackPageviewsCall.params.trackHashChange).isEqualTo(true);
+    assertThat(trackPageviewsCall.params.trackLocationChange).isEqualTo(true);
+    assertApi('gtmOnSuccess').wasCalled();
+
+- name: sw_trackPageviews_disabled
+  code: |-
+    const mockData = {
+      pid: '123e4567-e89b-12d3-a456-426655440000',
+      tracklocationchange: false,
+      trackhashchange: false
+    };
+
+    let capturedSwCalls = [];
+    mock('createArgumentsQueue', function(name, queue) {
+      return function(action, params) {
+        capturedSwCalls.push({
+          name: name,
+          action: action,
+          params: params
+        });
+      };
+    });
+
+    runCode(mockData);
+
+    const trackPageviewsCall = (function() {
+      for (let i = 0; i < capturedSwCalls.length; i++) {
+        if (capturedSwCalls[i].action === 'trackPageviews') {
+          return capturedSwCalls[i];
+        }
+      }
+      return undefined;
+    })();
+    assertThat(trackPageviewsCall).isUndefined();
+    assertApi('gtmOnSuccess').wasCalled();
+
+- name: sw_trackForms_submit_mode
+  code: |-
+    const mockData = {
+      pid: '123e4567-e89b-12d3-a456-426655440000',
+      trackformsenabled: true,
+      trackformsmode: 'submit',
+      trackformsdelay: '100'
+    };
+
+    let capturedSwCalls = [];
+    mock('createArgumentsQueue', function(name, queue) {
+      return function(action, params) {
+        capturedSwCalls.push({
+          name: name,
+          action: action,
+          params: params
+        });
+      };
+    });
+
+    runCode(mockData);
+
+    const trackFormsCall = (function() {
+      for (let i = 0; i < capturedSwCalls.length; i++) {
+        if (capturedSwCalls[i].action === 'trackForms') {
+          return capturedSwCalls[i];
+        }
+      }
+      return undefined;
+    })();
+    assertThat(trackFormsCall).isDefined();
+    assertThat(trackFormsCall.params.mode).isEqualTo('submit');
+    assertThat(trackFormsCall.params.delay).isEqualTo('100');
+    assertApi('gtmOnSuccess').wasCalled();
+
+- name: sw_trackForms_blur_mode
+  code: |-
+    const mockData = {
+      pid: '123e4567-e89b-12d3-a456-426655440000',
+      trackformsenabled: true,
+      trackformsmode: 'blur',
+      trackformsdelay: '0'
+    };
+
+    let capturedSwCalls = [];
+    mock('createArgumentsQueue', function(name, queue) {
+      return function(action, params) {
+        capturedSwCalls.push({
+          name: name,
+          action: action,
+          params: params
+        });
+      };
+    });
+
+    runCode(mockData);
+
+    const trackFormsCall = (function() {
+      for (let i = 0; i < capturedSwCalls.length; i++) {
+        if (capturedSwCalls[i].action === 'trackForms') {
+          return capturedSwCalls[i];
+        }
+      }
+      return undefined;
+    })();
+    assertThat(trackFormsCall).isDefined();
+    assertThat(trackFormsCall.params.mode).isEqualTo('blur');
+    assertThat(trackFormsCall.params.delay).isEqualTo('0');
+    assertApi('gtmOnSuccess').wasCalled();
+
+- name: sw_trackForms_legacy_mode
+  code: |-
+    const mockData = {
+      pid: '123e4567-e89b-12d3-a456-426655440000',
+      trackformsenabled: true,
+      trackformsmode: 'legacy',
+      trackformsdelay: '500'
+    };
+
+    let capturedSwCalls = [];
+    mock('createArgumentsQueue', function(name, queue) {
+      return function(action, params) {
+        capturedSwCalls.push({
+          name: name,
+          action: action,
+          params: params
+        });
+      };
+    });
+
+    runCode(mockData);
+
+    const trackFormsCall = (function() {
+      for (let i = 0; i < capturedSwCalls.length; i++) {
+        if (capturedSwCalls[i].action === 'trackForms') {
+          return capturedSwCalls[i];
+        }
+      }
+      return undefined;
+    })();
+    assertThat(trackFormsCall).isDefined();
+    assertThat(trackFormsCall.params.mode).isEqualTo('legacy');
+    assertThat(trackFormsCall.params.delay).isEqualTo('500');
+    assertApi('gtmOnSuccess').wasCalled();
+
+- name: sw_trackForms_default_fallback
+  code: |-
+    const mockData = {
+      pid: '123e4567-e89b-12d3-a456-426655440000',
+      trackformsenabled: true
+    };
+
+    let capturedSwCalls = [];
+    mock('createArgumentsQueue', function(name, queue) {
+      return function(action, params) {
+        capturedSwCalls.push({
+          name: name,
+          action: action,
+          params: params
+        });
+      };
+    });
+
+    runCode(mockData);
+
+    const trackFormsCall = (function() {
+      for (let i = 0; i < capturedSwCalls.length; i++) {
+        if (capturedSwCalls[i].action === 'trackForms') {
+          return capturedSwCalls[i];
+        }
+      }
+      return undefined;
+    })();
+    assertThat(trackFormsCall).isDefined();
+    assertThat(trackFormsCall.params.mode).isEqualTo('submit');
+    assertApi('gtmOnSuccess').wasCalled();
+
+- name: sw_trackForms_disabled
+  code: |-
+    const mockData = {
+      pid: '123e4567-e89b-12d3-a456-426655440000',
+      trackformsenabled: false
+    };
+
+    let capturedSwCalls = [];
+    mock('createArgumentsQueue', function(name, queue) {
+      return function(action, params) {
+        capturedSwCalls.push({
+          name: name,
+          action: action,
+          params: params
+        });
+      };
+    });
+
+    runCode(mockData);
+
+    const trackFormsCall = (function() {
+      for (let i = 0; i < capturedSwCalls.length; i++) {
+        if (capturedSwCalls[i].action === 'trackForms') {
+          return capturedSwCalls[i];
+        }
+      }
+      return undefined;
+    })();
+    assertThat(trackFormsCall).isUndefined();
+    assertApi('gtmOnSuccess').wasCalled();
+
+- name: sw_enablePopups_with_url
+  code: |-
+    const mockData = {
+      pid: '123e4567-e89b-12d3-a456-426655440000',
+      interactionsenabled: true,
+      interactionsapiurl: 'https://custom-interactions.example.com/api'
+    };
+
+    let capturedSwCalls = [];
+    mock('createArgumentsQueue', function(name, queue) {
+      return function(action, params) {
+        capturedSwCalls.push({
+          name: name,
+          action: action,
+          params: params
+        });
+      };
+    });
+
+    runCode(mockData);
+
+    const enablePopupsCall = (function() {
+      for (let i = 0; i < capturedSwCalls.length; i++) {
+        if (capturedSwCalls[i].action === 'enablePopups') {
+          return capturedSwCalls[i];
+        }
+      }
+      return undefined;
+    })();
+    assertThat(enablePopupsCall).isDefined();
+    assertThat(enablePopupsCall.params.apiUrl).isEqualTo('https://custom-interactions.example.com/api');
+    assertApi('gtmOnSuccess').wasCalled();
+
+- name: sw_enablePopups_without_url
+  code: |-
+    const mockData = {
+      pid: '123e4567-e89b-12d3-a456-426655440000',
+      interactionsenabled: true
+    };
+
+    let capturedSwCalls = [];
+    mock('createArgumentsQueue', function(name, queue) {
+      return function(action, params) {
+        capturedSwCalls.push({
+          name: name,
+          action: action,
+          params: params
+        });
+      };
+    });
+
+    runCode(mockData);
+
+    const enablePopupsCall = (function() {
+      for (let i = 0; i < capturedSwCalls.length; i++) {
+        if (capturedSwCalls[i].action === 'enablePopups') {
+          return capturedSwCalls[i];
+        }
+      }
+      return undefined;
+    })();
+    assertThat(enablePopupsCall).isDefined();
+    assertThat(enablePopupsCall.params.apiUrl).isUndefined();
+    assertApi('gtmOnSuccess').wasCalled();
+
+- name: sw_enablePopups_disabled
+  code: |-
+    const mockData = {
+      pid: '123e4567-e89b-12d3-a456-426655440000',
+      interactionsenabled: false
+    };
+
+    let capturedSwCalls = [];
+    mock('createArgumentsQueue', function(name, queue) {
+      return function(action, params) {
+        capturedSwCalls.push({
+          name: name,
+          action: action,
+          params: params
+        });
+      };
+    });
+
+    runCode(mockData);
+
+    const enablePopupsCall = (function() {
+      for (let i = 0; i < capturedSwCalls.length; i++) {
+        if (capturedSwCalls[i].action === 'enablePopups') {
+          return capturedSwCalls[i];
+        }
+      }
+      return undefined;
+    })();
+    assertThat(enablePopupsCall).isUndefined();
+    assertApi('gtmOnSuccess').wasCalled();
+
+- name: script_injection_beta
+  code: |-
+    const mockData = {
+      pid: '123e4567-e89b-12d3-a456-426655440000',
+      beta: true
+    };
+
+    mock('injectScript', (url) => {
+      if (url !== 'https://s.saleswingsapp.com/sw.beta.min.js') {
+        fail('injectScript not called with beta script URL');
+      }
+    });
+
+    runCode(mockData);
+
+    assertApi('injectScript').wasCalled();
+    assertApi('gtmOnSuccess').wasCalled();
+
+- name: script_injection_prod
+  code: |-
+    const mockData = {
+      pid: '123e4567-e89b-12d3-a456-426655440000',
+      beta: false
+    };
+
+    mock('injectScript', (url) => {
+      if (url !== 'https://s.saleswingsapp.com/sw.prod.min.js') {
+        fail('injectScript not called with production script URL');
+      }
+    });
+
+    runCode(mockData);
+
+    assertApi('injectScript').wasCalled();
+    assertApi('gtmOnSuccess').wasCalled();
 
 ___NOTES___
 
