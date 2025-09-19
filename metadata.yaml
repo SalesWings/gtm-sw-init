@@ -15,6 +15,8 @@
 homepage: "https://www.saleswingsapp.com"
 documentation: "http://support.saleswingsapp.com/en/"
 versions:
+  - sha: 4f50debc777b273cf1834f16c8f5de6c376b2c9b
+    changeNotes: Interactions section, rework form and page view tracking config
   - sha: 632ab290aecdb134769b419e4b34f03ae2363b75
     changeNotes: Set Submit as the default form tracking mode
   - sha: 1c065502c67387827a6b7d63f10d16ab2d2d3d2e
