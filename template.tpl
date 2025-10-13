@@ -375,7 +375,7 @@ if(data.trackhashchange || data.tracklocationchange){
     ); 
 }
 
-if(data.trackformsenabled){
+if(data.trackformsenabled !== false){
   sw('trackForms', {
     mode: data.trackformsmode || 'submit',
     delay: data.trackformsdelay});
@@ -926,6 +926,38 @@ scenarios:
       return undefined;
     })();
     assertThat(trackFormsCall).isUndefined();
+    assertApi('gtmOnSuccess').wasCalled();
+
+- name: sw_trackForms_undefined_upgrade_scenario
+  code: |-
+    const mockData = {
+      pid: '123e4567-e89b-12d3-a456-426655440000'
+    };
+
+    let capturedSwCalls = [];
+    mock('createArgumentsQueue', function(name, queue) {
+      return function(action, params) {
+        capturedSwCalls.push({
+          name: name,
+          action: action,
+          params: params
+        });
+      };
+    });
+
+    runCode(mockData);
+
+    const trackFormsCall = (function() {
+      for (let i = 0; i < capturedSwCalls.length; i++) {
+        if (capturedSwCalls[i].action === 'trackForms') {
+          return capturedSwCalls[i];
+        }
+      }
+      return undefined;
+    })();
+    assertThat(trackFormsCall).isDefined();
+    assertThat(trackFormsCall.params.mode).isEqualTo('submit');
+    assertThat(trackFormsCall.params.delay).isUndefined();
     assertApi('gtmOnSuccess').wasCalled();
 
 - name: sw_enablePopups_with_url
