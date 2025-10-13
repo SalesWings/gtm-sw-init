@@ -955,7 +955,7 @@ scenarios:
       }
       return undefined;
     })();
-    assertThat(trackFormsCall).isNotUndefined();
+    assertThat(trackFormsCall).isDefined();
     assertThat(trackFormsCall.params.mode).isEqualTo('submit');
     assertThat(trackFormsCall.params.delay).isUndefined();
     assertApi('gtmOnSuccess').wasCalled();
