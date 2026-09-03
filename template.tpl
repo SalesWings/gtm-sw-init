@@ -362,11 +362,18 @@ const createArgumentsQueue = require('createArgumentsQueue');
 // GTM does not write a new field's default value into tag instances that were
 // created before the field existed, so data.environment is undefined on every
 // instance upgraded from the Beta checkbox, and stays undefined until the tag
-// is edited and saved. Fall back to the legacy beta property for the instances
-// that had it checked, and to prod for everyone else. Any other value, expected
-// or not, resolves to prod as well: prod is the only safe build to serve to a
-// production container.
-const environment = data.environment || (data.beta === true ? 'beta' : 'prod');
+// is edited and saved. Those instances resolve to prod, which is what the
+// dropdown displays for them.
+//
+// The removed beta property survives on instances that had the checkbox
+// checked, but is deliberately ignored: honouring it would load the beta build
+// while the dropdown displayed Prod, and a template cannot write back to tag
+// configuration to correct that. Beta is internal-only, so those tags move to
+// the stable build on upgrade and the team re-selects Beta by hand.
+//
+// Any unrecognised value resolves to prod as well: prod is the only safe build
+// to serve to a production container.
+const environment = data.environment || 'prod';
 
 let ws_script;
 if (environment === 'dev') {
@@ -1178,8 +1185,9 @@ scenarios:
     assertApi('injectScript').wasCalled();
     assertApi('gtmOnSuccess').wasCalled();
 
-# Same upgrade, for an instance that had the Beta checkbox checked: the orphaned
-# beta property keeps it on the beta build until an environment is chosen.
+# Same upgrade, for an instance that had the Beta checkbox checked. The orphaned
+# beta property is ignored: the dropdown displays Prod for this instance, so it
+# must load prod. The team re-selects Beta by hand.
 - name: script_injection_legacy_beta_true_upgrade_scenario
   code: |-
     const mockData = {
@@ -1188,8 +1196,8 @@ scenarios:
     };
 
     mock('injectScript', (url) => {
-      if (url !== 'https://s.saleswingsapp.com/sw.beta.min.js') {
-        fail('injectScript not called with beta script URL');
+      if (url !== 'https://s.saleswingsapp.com/sw.prod.min.js') {
+        fail('injectScript not called with production script URL');
       }
     });
 
@@ -1198,18 +1206,18 @@ scenarios:
     assertApi('injectScript').wasCalled();
     assertApi('gtmOnSuccess').wasCalled();
 
-# An explicit environment always wins over the orphaned legacy beta property.
-- name: script_injection_environment_overrides_legacy_beta
+# The orphaned beta property never overrides an explicit environment either.
+- name: script_injection_legacy_beta_does_not_override_environment
   code: |-
     const mockData = {
       pid: '123e4567-e89b-12d3-a456-426655440000',
-      environment: 'prod',
+      environment: 'dev',
       beta: true
     };
 
     mock('injectScript', (url) => {
-      if (url !== 'https://s.saleswingsapp.com/sw.prod.min.js') {
-        fail('injectScript not called with production script URL');
+      if (url !== 'https://s.saleswingsapp.com/sw.dev.min.js') {
+        fail('injectScript not called with dev script URL');
       }
     });
 
