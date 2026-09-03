@@ -359,20 +359,6 @@ ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 const log = require('logToConsole');
 const injectScript = require('injectScript');
 const createArgumentsQueue = require('createArgumentsQueue');
-// GTM does not write a new field's default value into tag instances that were
-// created before the field existed, so data.environment is undefined on every
-// instance upgraded from the Beta checkbox, and stays undefined until the tag
-// is edited and saved. Those instances resolve to prod, which is what the
-// dropdown displays for them.
-//
-// The removed beta property survives on instances that had the checkbox
-// checked, but is deliberately ignored: honouring it would load the beta build
-// while the dropdown displayed Prod, and a template cannot write back to tag
-// configuration to correct that. Beta is internal-only, so those tags move to
-// the stable build on upgrade and the team re-selects Beta by hand.
-//
-// Any unrecognised value resolves to prod as well: prod is the only safe build
-// to serve to a production container.
 const environment = data.environment || 'prod';
 
 let ws_script;
