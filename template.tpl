@@ -239,11 +239,27 @@ ___TEMPLATE_PARAMETERS___
         "help": "Log debug messages to browser console."
       },
       {
-        "type": "CHECKBOX",
-        "name": "beta",
-        "checkboxText": "Beta",
+        "type": "SELECT",
+        "name": "environment",
+        "displayName": "Environment",
+        "macrosInSelect": false,
+        "selectItems": [
+          {
+            "value": "prod",
+            "displayValue": "Prod"
+          },
+          {
+            "value": "beta",
+            "displayValue": "Beta"
+          },
+          {
+            "value": "dev",
+            "displayValue": "Dev"
+          }
+        ],
         "simpleValueType": true,
-        "help": "Use beta build of the tracking script. This is reserved for internal use by the SalesWings development team."
+        "defaultValue": "prod",
+        "help": "Choose the build of the tracking script to load. Prod is the stable build and the correct choice for every production container. Beta and Dev are reserved for internal use by the SalesWings development team."
       },
       {
         "type": "SELECT",
@@ -343,9 +359,23 @@ ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 const log = require('logToConsole');
 const injectScript = require('injectScript');
 const createArgumentsQueue = require('createArgumentsQueue');
-let ws_script = data.beta?
-    'https://s.saleswingsapp.com/sw.beta.min.js':
-    'https://s.saleswingsapp.com/sw.prod.min.js';
+// GTM does not write a new field's default value into tag instances that were
+// created before the field existed, so data.environment is undefined on every
+// instance upgraded from the Beta checkbox, and stays undefined until the tag
+// is edited and saved. Fall back to the legacy beta property for the instances
+// that had it checked, and to prod for everyone else. Any other value, expected
+// or not, resolves to prod as well: prod is the only safe build to serve to a
+// production container.
+const environment = data.environment || (data.beta === true ? 'beta' : 'prod');
+
+let ws_script;
+if (environment === 'dev') {
+  ws_script = 'https://s.saleswingsapp.com/sw.dev.min.js';
+} else if (environment === 'beta') {
+  ws_script = 'https://s.saleswingsapp.com/sw.beta.min.js';
+} else {
+  ws_script = 'https://s.saleswingsapp.com/sw.prod.min.js';
+}
 
 injectScript(ws_script,data.gtmOnSuccess, data.gtmOnFailure,'');
 
@@ -1060,6 +1090,100 @@ scenarios:
   code: |-
     const mockData = {
       pid: '123e4567-e89b-12d3-a456-426655440000',
+      environment: 'beta'
+    };
+
+    mock('injectScript', (url) => {
+      if (url !== 'https://s.saleswingsapp.com/sw.beta.min.js') {
+        fail('injectScript not called with beta script URL');
+      }
+    });
+
+    runCode(mockData);
+
+    assertApi('injectScript').wasCalled();
+    assertApi('gtmOnSuccess').wasCalled();
+
+- name: script_injection_dev
+  code: |-
+    const mockData = {
+      pid: '123e4567-e89b-12d3-a456-426655440000',
+      environment: 'dev'
+    };
+
+    mock('injectScript', (url) => {
+      if (url !== 'https://s.saleswingsapp.com/sw.dev.min.js') {
+        fail('injectScript not called with dev script URL');
+      }
+    });
+
+    runCode(mockData);
+
+    assertApi('injectScript').wasCalled();
+    assertApi('gtmOnSuccess').wasCalled();
+
+- name: script_injection_prod
+  code: |-
+    const mockData = {
+      pid: '123e4567-e89b-12d3-a456-426655440000',
+      environment: 'prod'
+    };
+
+    mock('injectScript', (url) => {
+      if (url !== 'https://s.saleswingsapp.com/sw.prod.min.js') {
+        fail('injectScript not called with production script URL');
+      }
+    });
+
+    runCode(mockData);
+
+    assertApi('injectScript').wasCalled();
+    assertApi('gtmOnSuccess').wasCalled();
+
+# Upgrade from the Beta checkbox: GTM leaves environment undefined on instances
+# created before the field existed, so these instances must still land on prod.
+- name: script_injection_undefined_environment_upgrade_scenario
+  code: |-
+    const mockData = {
+      pid: '123e4567-e89b-12d3-a456-426655440000'
+    };
+
+    mock('injectScript', (url) => {
+      if (url !== 'https://s.saleswingsapp.com/sw.prod.min.js') {
+        fail('injectScript not called with production script URL');
+      }
+    });
+
+    runCode(mockData);
+
+    assertApi('injectScript').wasCalled();
+    assertApi('gtmOnSuccess').wasCalled();
+
+# Same upgrade, for an instance that had the Beta checkbox explicitly unchecked.
+- name: script_injection_legacy_beta_false_upgrade_scenario
+  code: |-
+    const mockData = {
+      pid: '123e4567-e89b-12d3-a456-426655440000',
+      beta: false
+    };
+
+    mock('injectScript', (url) => {
+      if (url !== 'https://s.saleswingsapp.com/sw.prod.min.js') {
+        fail('injectScript not called with production script URL');
+      }
+    });
+
+    runCode(mockData);
+
+    assertApi('injectScript').wasCalled();
+    assertApi('gtmOnSuccess').wasCalled();
+
+# Same upgrade, for an instance that had the Beta checkbox checked: the orphaned
+# beta property keeps it on the beta build until an environment is chosen.
+- name: script_injection_legacy_beta_true_upgrade_scenario
+  code: |-
+    const mockData = {
+      pid: '123e4567-e89b-12d3-a456-426655440000',
       beta: true
     };
 
@@ -1074,11 +1198,33 @@ scenarios:
     assertApi('injectScript').wasCalled();
     assertApi('gtmOnSuccess').wasCalled();
 
-- name: script_injection_prod
+# An explicit environment always wins over the orphaned legacy beta property.
+- name: script_injection_environment_overrides_legacy_beta
   code: |-
     const mockData = {
       pid: '123e4567-e89b-12d3-a456-426655440000',
-      beta: false
+      environment: 'prod',
+      beta: true
+    };
+
+    mock('injectScript', (url) => {
+      if (url !== 'https://s.saleswingsapp.com/sw.prod.min.js') {
+        fail('injectScript not called with production script URL');
+      }
+    });
+
+    runCode(mockData);
+
+    assertApi('injectScript').wasCalled();
+    assertApi('gtmOnSuccess').wasCalled();
+
+# A value the template does not know about must never reach a container as a
+# missing or malformed script URL.
+- name: script_injection_unknown_environment_falls_back_to_prod
+  code: |-
+    const mockData = {
+      pid: '123e4567-e89b-12d3-a456-426655440000',
+      environment: 'staging'
     };
 
     mock('injectScript', (url) => {
