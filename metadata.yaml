@@ -13,7 +13,7 @@
 # limitations under the License.
 
 homepage: "https://www.saleswingsapp.com"
-documentation: "http://support.saleswingsapp.com/en/"
+documentation: "https://support.saleswingsapp.com/en/articles/4373574-implement-saleswings-using-google-tag-manager"
 versions:
   - sha: 664e2fa526472997b40b846ca4192c75955f2219
     changeNotes: Fix default form tracking behavior for legacy tag instances
