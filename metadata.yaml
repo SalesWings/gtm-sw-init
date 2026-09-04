@@ -15,6 +15,8 @@
 homepage: "https://www.saleswingsapp.com"
 documentation: "https://support.saleswingsapp.com/en/articles/4373574-implement-saleswings-using-google-tag-manager"
 versions:
+  - sha: d5a69261ff882fd3a4e7989f91ce637ec8e71895
+    changeNotes: Replace the Beta checkbox with an Environment dropdown (Prod / Beta / Dev). Tags that had Beta checked now load the production build; re-select Beta in the Environment dropdown to restore it.
   - sha: 664e2fa526472997b40b846ca4192c75955f2219
     changeNotes: Fix default form tracking behavior for legacy tag instances
   - sha: 4f50debc777b273cf1834f16c8f5de6c376b2c9b
